@@ -6,9 +6,7 @@ const port = process.env.PORT || 8000;
 const app = express();
 const staticDir = process.env.DEV ? "./client/public" : "./client/build";
 app.use(express.static(staticDir));
-
-
-
+app.use(express.urlencoded({extended: true}))
 const Messages = require('./chatty/data.js')
 
 app.listen(port, () => {
@@ -23,21 +21,40 @@ mongoose.connection.on("connected", (err, res) => {
 })
 
 //see all chatrooms IDs as JSON
-app.get("/api", (req, res) => {
-  res.sendFile(path.resolve('./api/chattyIndex.json'))
+app.get("/rooms", (req, res) => {
+  res.sendFile(path.resolve('./rooms/chattyIndex.json'))
 })
 
 //see individual chatrooms in JSON
-app.get("/api/:chatrooms", (req, res) => {
-  res.sendFile(path.resolve('./api/' + req.params.chatrooms + '.json'));
+app.get("/rooms/:chatrooms", (req, res) => {
+  res.sendFile(path.resolve('./rooms/' + req.params.chatrooms + '.json'));
 });
+
+
+app.get("/rooms/main", async (req, res) => {
+  let mainPosts = await Messages.find({})
+  console.log(mainPosts)
+  res.json(mainPosts)
+});
+
+app.post("/rooms/main", async (req, res) => {
+  const message = new Messages({
+    when: Date.now,
+    user: req.body.user,
+    body: req.body.message
+  })
+
+  await message.save();
+})
+
 
 //setting up the catch all route 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve('./client/public/index.html'))
 });
 
-app.post('/api/messages', (req, res) => {
-  const chattyKathy = new Messages({ when: req.body.when, user: req.body.user, body: req.body.body, })
-  chattyKathy.save();
-});
+
+
+
+
+
