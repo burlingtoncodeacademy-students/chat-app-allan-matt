@@ -23,9 +23,18 @@ mongoose.connection.on("connected", (err, res) => {
   console.log("Mongoose is connected. You done good there son.")
 })
 
+app.get("/rooms", (req, res) => {
+  res.sendFile(path.resolve('./rooms/chattyIndex.json'))
+})
+
+//see all the available restaurants in JSON
+app.get("/rooms/:room", (req, res) => {
+  res.sendFile(path.resolve('./rooms/' + req.params.rooms + '.json'));
+});
 
 
-//see data from Main Chatroom
+
+//see db data from Main Chatroom
 app.get("/rooms/main", async (req, res) => {
   let mainPosts = await Messages.find({})
   console.log(mainPosts)
@@ -40,7 +49,7 @@ app.post("/rooms/main", async (req, res) => {
   })
 
   await post.save();
-  res.redirect('/Main')
+  res.redirect('/rooms/main')
 })
 
 //see data from Main Chatroom
@@ -58,7 +67,7 @@ app.post("/rooms/gaming", async (req, res) => {
   })
 
   await post.save();
-  res.redirect('/gaming')
+  res.redirect('/rooms/gaming')
 })
 
 //see data from Pet Chatroom
@@ -76,14 +85,11 @@ app.post("/rooms/pets", async (req, res) => {
   })
 
   await post.save();
-  res.redirect('/pets')
+  res.redirect('/rooms/pets')
 })
 
 
-//setting up the catch all route 
-app.get('/', (req, res) => {
-  res.sendFile(path.resolve('./client/public/index.html'))
-});
+
 
 
 

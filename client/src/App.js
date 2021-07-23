@@ -1,22 +1,31 @@
-import './App.css';
-import React from 'react';
-import Main from "./Components/Main"
-import Nav from "./Components/Nav"
-import Gaming from "./Components/Gaming.js"
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
-
-const App = () => {
+import Home from "./Components/Home.js";
+import Chatroom from "./Components/ChatRoom.js";
+import { Switch, Route, Redirect } from "react-router-dom";
+function App(props) {
+  //
   return (
-    <div className="App">
-     <BrowserRouter>
-     <Nav />
-     <Switch>
-       <Route exact path ="/" />
-       <Route path="/Main" component ={Main} />
-       <Route path="/Gaming" component ={Gaming} />
-     </Switch>
-     </BrowserRouter>
-    </div>
+    <div id="maincontainer">
+    <h1 id="apptitle">
+      <a href="/">
+        <span>Chat Till You Drop</span>
+      </a>
+    </h1>
+    <div id="serverroutes">
+    <Switch>
+      <Route exact path="/"><Home/></Route>
+
+      <Route
+        path="/rooms/:id"
+        children={(props) => {
+          return props.match.isExact ? (
+            <Chatroom match={props.match} />
+          ) : (
+            <Redirect to="/" />
+          );
+        }}
+      />
+    </Switch>
+    </div></div>
   );
 }
 
