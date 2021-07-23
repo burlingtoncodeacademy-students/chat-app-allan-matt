@@ -16,7 +16,7 @@ const MessageSchema = new Schema({
     trim: true,
     maxLength: 100
   },
-  body: {
+  message: {
     type: String,
     required: true,
     trim: true,

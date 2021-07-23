@@ -38,13 +38,13 @@ app.get("/rooms/main", async (req, res) => {
 });
 
 app.post("/rooms/main", async (req, res) => {
-  const message = new Messages({
-    when: Date.now,
+  const post = new Messages({
+    when: Date.now(),
     user: req.body.user,
-    body: req.body.message
+    message: req.body.message
   })
 
-  await message.save();
+  await post.save();
 })
 
 
