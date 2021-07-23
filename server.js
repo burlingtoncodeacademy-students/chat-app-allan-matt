@@ -7,9 +7,9 @@ const app = express();
 const staticDir = process.env.DEV ? "./client/public" : "./client/build";
 app.use(express.static(staticDir));
 app.use(express.urlencoded({extended: true}))
-const Main = require('./chatty/schema.js')
-const Gamer = require('./chatty/schema.js')
-const Pet = require('./chatty/schema.js')
+const Main = require('./chatty/mainschema.js')
+const Gamer = require('./chatty/gamerschema.js')
+const Pet = require('./chatty/petschema.js')
 
 
 app.listen(port, () => {
@@ -58,7 +58,7 @@ app.post("/rooms/gaming", async (req, res) => {
   })
 
   await post.save();
-  res.redirect('/Gaming')
+  res.redirect('/gaming')
 })
 
 //see data from Pet Chatroom
@@ -76,7 +76,7 @@ app.post("/rooms/pets", async (req, res) => {
   })
 
   await post.save();
-  res.redirect('/Pets')
+  res.redirect('/pets')
 })
 
 
