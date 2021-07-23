@@ -7,9 +7,9 @@ const app = express();
 const staticDir = process.env.DEV ? "./client/public" : "./client/build";
 app.use(express.static(staticDir));
 app.use(express.urlencoded({extended: true}))
-const Main = require('./chatty/mainschema.js')
-const Gamer = require('./chatty/mainschema.js')
-const Pet = require('./chatty/mainschema.js')
+const Main = require('./chatty/schema.js')
+const Gamer = require('./chatty/schema.js')
+const Pet = require('./chatty/schema.js')
 
 
 app.listen(port, () => {
@@ -43,6 +43,41 @@ app.post("/rooms/main", async (req, res) => {
   res.redirect('/Main')
 })
 
+//see data from Main Chatroom
+app.get("/rooms/gaming", async (req, res) => {
+  let gamingPosts = await Messages.find({})
+  console.log(gamingPosts)
+  res.json(gamingPosts)
+});
+
+app.post("/rooms/gaming", async (req, res) => {
+  const post = new Gamer({
+    when: Date.now(),
+    user: req.body.user,
+    message: req.body.message
+  })
+
+  await post.save();
+  res.redirect('/Gaming')
+})
+
+//see data from Pet Chatroom
+app.get("/rooms/pets", async (req, res) => {
+  let petPosts = await Messages.find({})
+  console.log(petPosts)
+  res.json(petPosts)
+});
+
+app.post("/rooms/pets", async (req, res) => {
+  const post = new Pet({
+    when: Date.now(),
+    user: req.body.user,
+    message: req.body.message
+  })
+
+  await post.save();
+  res.redirect('/Pets')
+})
 
 
 //setting up the catch all route 
