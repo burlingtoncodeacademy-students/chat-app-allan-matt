@@ -1,1 +1,25 @@
 
+*Single Restaurant*/
+#infocontainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#resinfo {
+  font-family:Ubuntu;
+  font-size: 20px;
+}
+/*Comments*/
+h3 {
+  color: darkblue;
+}
+
+#textarea {
+  width: 25vw;
+  color: darkblue;
+}
+
+#submit {
+  color: darkblue;
+  display: flex;}

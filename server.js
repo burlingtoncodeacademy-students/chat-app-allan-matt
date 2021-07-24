@@ -6,10 +6,11 @@ const port = process.env.PORT || 8000;
 const app = express();
 const staticDir = process.env.DEV ? "./client/public" : "./client/build";
 app.use(express.static(staticDir));
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({extended: false}))
 const Main = require('./chatty/mainschema.js')
 const Gamer = require('./chatty/gamerschema.js')
 const Pet = require('./chatty/petschema.js')
+
 
 
 app.listen(port, () => {
@@ -35,11 +36,16 @@ app.get("/rooms/:room", (req, res) => {
 
 
 //see db data from Main Chatroom
-app.get("/rooms/main", async (req, res) => {
-  let mainPosts = await Messages.find({})
-  console.log(mainPosts)
-  res.json(mainPosts)
-});
+//app.get("/rooms/main", async (req, res) => {
+ // let mainPosts = await Main.find()
+ // let allPosts = []
+  //console.log(mainPosts)
+  //await mainPosts.forEach(message => {
+    //allPosts.push(message)
+ // })
+
+  //res.json(allPosts)
+//});
 
 app.post("/rooms/main", async (req, res) => {
   const post = new Main({
@@ -48,13 +54,22 @@ app.post("/rooms/main", async (req, res) => {
     message: req.body.message
   })
 
-  await post.save();
-  res.redirect('/rooms/main')
+  await post.save();  
+  let mainPosts = await Main.find()
+  let allPosts = []
+  console.log(mainPosts)
+  await mainPosts.forEach(message => {
+    allPosts.push(message)
+  })
+
+  res.json(allPosts)
+  res.redirect("/rooms/main")
+
 })
 
 //see data from Main Chatroom
-app.get("/rooms/gaming", async (req, res) => {
-  let gamingPosts = await Messages.find({})
+app.get("/rooms/gaming/data", async (req, res) => {
+  let gamingPosts = await Gamer.find()
   console.log(gamingPosts)
   res.json(gamingPosts)
 });
@@ -71,8 +86,8 @@ app.post("/rooms/gaming", async (req, res) => {
 })
 
 //see data from Pet Chatroom
-app.get("/rooms/pets", async (req, res) => {
-  let petPosts = await Messages.find({})
+app.get("/rooms/pets/data", async (req, res) => {
+  let petPosts = await Pet.find({})
   console.log(petPosts)
   res.json(petPosts)
 });

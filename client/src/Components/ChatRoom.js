@@ -5,9 +5,9 @@ function Chatroom(props) {
   const [info, setinfo] = useState({
     id: "",
     name: "",
-    when: "",
-    user: "",
-    message: "",
+    user: [],
+    when: [],
+    body: [],
   });
   //Room Id is assigned to a variable
   let roomInfo = props.match.params.id;
@@ -16,11 +16,11 @@ function Chatroom(props) {
     // when the state is empty or doesn't match, a new one will be visited
     if (info.id === "" || info.id !== roomInfo) {
       //fetch the restaurant id from the api points
-      fetch(`/rooms/${roomInfo}`)
+      fetch(`/rooms/data`)
         .then((res) => res.json())
         //then you store it
-        .then((roomDetails) => {
-          setinfo(roomDetails);
+        .then((info) => {
+          setinfo(info);
         });
     }
   });
@@ -28,12 +28,8 @@ function Chatroom(props) {
   return (
     <div id="infocontainer">
       <h1 id="directory">{info.name}</h1>
-      <div id="roominfo">
-        {/*restaurant details are retrieved through fetch */}
-        <h4 className="info">{info.when}</h4>
-        <h4 className="info">{info.user}</h4>
-        <h4 className="info">{info.message}</h4>
-      </div>
+      <div>{info.message}</div>
+
 
       {/*Posts to be added*/}
       <div id="comments">

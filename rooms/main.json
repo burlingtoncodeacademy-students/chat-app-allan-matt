@@ -1,4 +1,7 @@
 {
     "id": "main",
-    "name": "Main"
+    "name": "Main",
+    "user": [],
+    "message": [],
+    "when": []
 }

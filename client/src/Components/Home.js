@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Home(props) {
-  //set up a state to store restaurant names
+  //set up a state to store room names
   const [name, setName] = useState([]);
 
   //hook to list names on home page
