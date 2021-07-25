@@ -1,17 +1,18 @@
 require('./initDB')();
+require("dotenv").config()
 const mongoose = require("mongoose")
 const express = require("express");
 const path = require("path");
+const bodyParser = require('body-parser');
 const port = process.env.PORT || 8000;
 const app = express();
 const staticDir = process.env.DEV ? "./client/public" : "./client/build";
+//Middleware
 app.use(express.static(staticDir));
 app.use(express.urlencoded({extended: false}))
-const Main = require('./chatty/mainschema.js')
-const Gamer = require('./chatty/gamerschema.js')
-const Pet = require('./chatty/petschema.js')
+app.use(bodyParser.json())
 
-
+mongoose.connect('mongodb+srv://chatapp.76wa3.mongodb.net/ChatApp?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})
 
 app.listen(port, () => {
   console.log('listening on port: ' + port) 
@@ -24,16 +25,66 @@ mongoose.connection.on("connected", (err, res) => {
   console.log("Mongoose is connected. You done good there son.")
 })
 
+const { Main, Gamer, Pets } = require("./chatty/mainschema")
+
+/*
 app.get("/rooms", (req, res) => {
   res.sendFile(path.resolve('./rooms/chattyIndex.json'))
 })
+*/
 
 //see all the available restaurants in JSON
-app.get("/rooms/:room", (req, res) => {
-  res.sendFile(path.resolve('./rooms/' + req.params.rooms + '.json'));
+app.get("/rooms/:room", async (req, res) => {
+  let allMessages = await list(req.params.room)
+  res.send(allMessages)
 });
 
+app.post("/rooms/:chatAppRoom", async (req, res) => {
+  await addPost(req.params.chatAppRoom, req.body.post)
+  res.sendStatus(201)
+})
 
+
+async function addPost(chatAppRoom, postObject ) {
+  //checking what room we're in
+  let room = ""
+  if (chatAppRoom === "gamers") {
+    room = Gamer
+  } else if (chatAppRoom === "pets") {
+    room = Pets
+  } else if (chatAppRoom === "mains") {
+    room = Main
+  }
+  //making new post object
+  let newPostObject = {
+    when: Date.now(),
+    user: postObject.user,
+    message: postObject.message
+  }
+  //making new post for the room we're in (new document collection)
+  let newPost = new room(newPostObject)
+  newPost.save()
+} 
+
+async function list(chatAppRoom) {
+   //checking what room we're in
+   let room = ""
+   if (chatAppRoom === "gamers") {
+     room = Gamer
+   } else if (chatAppRoom === "pets") {
+     room = Pets
+   } else if (chatAppRoom === "mains") {
+     room = Main
+   }
+
+let allPosts = await room.find({})
+return allPosts
+
+}
+
+app.get("*", (req, res) => {
+  res.sendFile (__dirname + "/client/public/index.html")
+})
 
 //see db data from Main Chatroom
 //app.get("/rooms/main", async (req, res) => {
@@ -46,7 +97,7 @@ app.get("/rooms/:room", (req, res) => {
 
   //res.json(allPosts)
 //});
-
+/*
 app.post("/rooms/main", async (req, res) => {
   const post = new Main({
     when: Date.now(),
@@ -65,8 +116,8 @@ app.post("/rooms/main", async (req, res) => {
   res.json(allPosts)
   res.redirect("/rooms/main")
 
-})
-
+}) */
+/*
 //see data from Main Chatroom
 app.get("/rooms/gaming/data", async (req, res) => {
   let gamingPosts = await Gamer.find()
@@ -102,7 +153,7 @@ app.post("/rooms/pets", async (req, res) => {
   await post.save();
   res.redirect('/rooms/pets')
 })
-
+*/
 
 
 

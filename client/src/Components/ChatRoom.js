@@ -1,35 +1,29 @@
 import { useState, useEffect } from "react";
 
-function Chatroom(props) {
+function Chatroom({ room }) {
   // variables are assigned to store details once the room details are fetched
-  const [info, setinfo] = useState({
-    id: "",
-    name: "",
-    user: [],
-    when: [],
-    body: [],
-  });
+  const [info, setInfo] = useState([]);
   //Room Id is assigned to a variable
-  let roomInfo = props.match.params.id;
 
   useEffect(() => {
-    // when the state is empty or doesn't match, a new one will be visited
-    if (info.id === "" || info.id !== roomInfo) {
-      //fetch the restaurant id from the api points
-      fetch(`/rooms/data`)
-        .then((res) => res.json())
+    const poster = () => {
+      fetch(`/rooms/${room}`)
+        .then((res) => {
+          return res.json();
+        })
         //then you store it
-        .then((info) => {
+        .then((res) => {
           setinfo(info);
         });
-    }
+    };
+    poster();
   });
-
+//use messages in state to create a new array and print array to the screen (.map)
+  
   return (
     <div id="infocontainer">
       <h1 id="directory">{info.name}</h1>
       <div>{info.message}</div>
-
 
       {/*Posts to be added*/}
       <div id="comments">
@@ -50,5 +44,4 @@ function Chatroom(props) {
     </div>
   );
 }
-
 export default Chatroom;

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const MainSchema = new Schema({
   when: {
     type: Date,
-    default: Date.now,
+    default: Date.now(),
     required: true,
   },
   user: {
@@ -21,4 +21,8 @@ const MainSchema = new Schema({
   },
 });
 
-module.exports = Main = mongoose.model("Main", MainSchema);
+ const Main = mongoose.model("Main", MainSchema)
+ const Gamer = mongoose.model("Gamer", MainSchema)
+ const Pets = mongoose.model("Pet", MainSchema)
+
+ module.exports = { Main, Gamer, Pets}
