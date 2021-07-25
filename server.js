@@ -3,14 +3,21 @@ require("dotenv").config()
 const mongoose = require("mongoose")
 const express = require("express");
 const path = require("path");
-const bodyParser = require('body-parser');
 const port = process.env.PORT || 8000;
 const app = express();
 const staticDir = process.env.DEV ? "./client/public" : "./client/build";
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Expose-Headers", "*");
+  res.header("Access-Control-Allow-Methods", "*");
+  next();
+});
 //Middleware
 app.use(express.static(staticDir));
-app.use(express.urlencoded({extended: false}))
-app.use(bodyParser.json())
+app.use(express.urlencoded({extended: true}))
+
+
 
 mongoose.connect('mongodb+srv://chatapp.76wa3.mongodb.net/ChatApp?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})
 
@@ -25,7 +32,7 @@ mongoose.connection.on("connected", (err, res) => {
   console.log("Mongoose is connected. You done good there son.")
 })
 
-const { Main, Gamer, Pets } = require("./chatty/mainschema")
+const { Main, Gamer, Pets, MainMessage } = require("./chatty/mainschema")
 
 /*
 app.get("/rooms", (req, res) => {
@@ -33,16 +40,25 @@ app.get("/rooms", (req, res) => {
 })
 */
 
-//see all the available restaurants in JSON
-app.get("/rooms/:room", async (req, res) => {
-  let allMessages = await list(req.params.room)
+//see all the available r in JSON
+app.get("/rooms/main", async (req, res,) => {
+  let allMessages = await MainMessage.find({})
   res.send(allMessages)
 });
 
-app.post("/rooms/:chatAppRoom", async (req, res) => {
-  await addPost(req.params.chatAppRoom, req.body.post)
-  res.sendStatus(201)
+
+app.post("/rooms/mains", async (req, res,) => {
+  const post = new MainMessage({
+    when: Date.now(),
+    user: req.body.user,
+    message: req.body.message
+  })
+
+  await post.save();  
+  res.redirect('/rooms/main')
 })
+
+
 
 
 async function addPost(chatAppRoom, postObject ) {
@@ -63,7 +79,7 @@ async function addPost(chatAppRoom, postObject ) {
   }
   //making new post for the room we're in (new document collection)
   let newPost = new room(newPostObject)
-  newPost.save()
+  await newPost.save()
 } 
 
 async function list(chatAppRoom) {
@@ -79,8 +95,8 @@ async function list(chatAppRoom) {
 
 let allPosts = await room.find({})
 return allPosts
-
 }
+
 
 app.get("*", (req, res) => {
   res.sendFile (__dirname + "/client/public/index.html")

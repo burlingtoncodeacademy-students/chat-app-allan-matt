@@ -19,10 +19,13 @@ const MainSchema = new Schema({
     trim: true,
     maxLength: 500,
   },
+  room: {
+    type: String
+  }
 });
 
- const Main = mongoose.model("Main", MainSchema)
+ const MainMessage = mongoose.model("Main", MainSchema)
  const Gamer = mongoose.model("Gamer", MainSchema)
  const Pets = mongoose.model("Pet", MainSchema)
 
- module.exports = { Main, Gamer, Pets}
+ module.exports = { MainMessage, Gamer, Pets}

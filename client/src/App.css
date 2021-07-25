@@ -1,5 +1,5 @@
 
-*Single Restaurant*/
+/*Single Room*/
 #infocontainer {
   display: flex;
   flex-direction: row;
@@ -23,3 +23,9 @@ h3 {
 #submit {
   color: darkblue;
   display: flex;}
+
+  #serverroutes {
+    display: flex;
+    align-content: center;
+    justify-content: space-between
+  }

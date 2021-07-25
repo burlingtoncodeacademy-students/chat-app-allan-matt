@@ -40,7 +40,7 @@ function Home(props) {
             return (
               <h3 key={index}>
                 <li>
-                  <Link className="chatlink" to={`/rooms/${chat}`}>
+                  <Link className="chatlink" to={`/${chat}`}>
                     {capitalize(chat.replaceAll("-", " "))}
                   </Link>
                 </li>
