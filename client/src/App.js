@@ -1,9 +1,10 @@
+//importing components
 import Home from "./Components/Home.js";
 import Chatroom from "./Components/ChatRoom.js";
 import { Switch, Route, Redirect } from "react-router-dom";
 import "./App.css";
 function App() {
-  //
+  //what to render with App
   return (
     <div id="maincontainer">
       <h1 id="apptitle">
@@ -15,7 +16,6 @@ function App() {
         <Switch>
           <Route exact path="/rooms/main"render={() => <Chatroom/>}>
           </Route>
-
         </Switch>
       </div>
     </div>

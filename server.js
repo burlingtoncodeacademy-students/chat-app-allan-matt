@@ -1,3 +1,4 @@
+// importing components to use for the server
 require('./initDB')();
 require("dotenv").config()
 const mongoose = require("mongoose")
@@ -13,18 +14,21 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "*");
   next();
 });
+
 //Middleware
 app.use(express.static(staticDir));
 app.use(express.urlencoded({extended: true}))
 
 
-
+//connecting to mongoose DB
 mongoose.connect('mongodb+srv://chatapp.76wa3.mongodb.net/ChatApp?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})
 
+//Telling server to listen for connection
 app.listen(port, () => {
   console.log('listening on port: ' + port) 
 })
 
+//mongoose connection messages
 mongoose.connection.on("error", err => {
   console.log("err", err)
 })
@@ -32,21 +36,17 @@ mongoose.connection.on("connected", (err, res) => {
   console.log("Mongoose is connected. You done good there son.")
 })
 
+//importing the mongoose models
 const { Main, Gamer, Pets, MainMessage } = require("./chatty/mainschema")
 
-/*
-app.get("/rooms", (req, res) => {
-  res.sendFile(path.resolve('./rooms/chattyIndex.json'))
-})
-*/
 
-//see all the available r in JSON
+//Getting all messages to display, only set up for main room currently
 app.get("/rooms/main", async (req, res,) => {
   let allMessages = await MainMessage.find({})
   res.send(allMessages)
 });
 
-
+//creating a new message and sending to the database
 app.post("/rooms/mains", async (req, res,) => {
   const post = new MainMessage({
     when: Date.now(),
@@ -60,10 +60,11 @@ app.post("/rooms/mains", async (req, res,) => {
 
 
 
-
+//adding a new post to display in the chat room
 async function addPost(chatAppRoom, postObject ) {
   //checking what room we're in
   let room = ""
+  //if statements setting the room variable based on what chat room we're in
   if (chatAppRoom === "gamers") {
     room = Gamer
   } else if (chatAppRoom === "pets") {
@@ -82,6 +83,7 @@ async function addPost(chatAppRoom, postObject ) {
   await newPost.save()
 } 
 
+//function to list all messages sent previously based on the chat room we're in
 async function list(chatAppRoom) {
    //checking what room we're in
    let room = ""
@@ -92,7 +94,7 @@ async function list(chatAppRoom) {
    } else if (chatAppRoom === "mains") {
      room = Main
    }
-
+//find those posts from the collection
 let allPosts = await room.find({})
 return allPosts
 }
@@ -101,80 +103,3 @@ return allPosts
 app.get("*", (req, res) => {
   res.sendFile (__dirname + "/client/public/index.html")
 })
-
-//see db data from Main Chatroom
-//app.get("/rooms/main", async (req, res) => {
- // let mainPosts = await Main.find()
- // let allPosts = []
-  //console.log(mainPosts)
-  //await mainPosts.forEach(message => {
-    //allPosts.push(message)
- // })
-
-  //res.json(allPosts)
-//});
-/*
-app.post("/rooms/main", async (req, res) => {
-  const post = new Main({
-    when: Date.now(),
-    user: req.body.user,
-    message: req.body.message
-  })
-
-  await post.save();  
-  let mainPosts = await Main.find()
-  let allPosts = []
-  console.log(mainPosts)
-  await mainPosts.forEach(message => {
-    allPosts.push(message)
-  })
-
-  res.json(allPosts)
-  res.redirect("/rooms/main")
-
-}) */
-/*
-//see data from Main Chatroom
-app.get("/rooms/gaming/data", async (req, res) => {
-  let gamingPosts = await Gamer.find()
-  console.log(gamingPosts)
-  res.json(gamingPosts)
-});
-
-app.post("/rooms/gaming", async (req, res) => {
-  const post = new Gamer({
-    when: Date.now(),
-    user: req.body.user,
-    message: req.body.message
-  })
-
-  await post.save();
-  res.redirect('/rooms/gaming')
-})
-
-//see data from Pet Chatroom
-app.get("/rooms/pets/data", async (req, res) => {
-  let petPosts = await Pet.find({})
-  console.log(petPosts)
-  res.json(petPosts)
-});
-
-app.post("/rooms/pets", async (req, res) => {
-  const post = new Pet({
-    when: Date.now(),
-    user: req.body.user,
-    message: req.body.message
-  })
-
-  await post.save();
-  res.redirect('/rooms/pets')
-})
-*/
-
-
-
-
-
-
-
-
