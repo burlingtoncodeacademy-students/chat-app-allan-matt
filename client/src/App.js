@@ -1,7 +1,6 @@
 //importing components
-import Home from "./Components/Home.js";
 import Chatroom from "./Components/ChatRoom.js";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import "./App.css";
 function App() {
   //what to render with App
